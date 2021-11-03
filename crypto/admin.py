@@ -5,7 +5,7 @@ from crypto.models import Crypto, CryptoData, CryptoPurchases, Alert, Wallet
 
 @admin.register(Crypto)
 class CryptoAdmin(admin.ModelAdmin):
-    list_display = ('symbol', 'display_name', 'updated', 'enabled')
+    list_display = ('symbol', 'display_name', 'updated', 'enabled', 'wallet')
     ordering = ('symbol',)
 
 
