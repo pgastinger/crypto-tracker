@@ -26,7 +26,7 @@ from crypto.utils import crypto_image_path
 
 
 class Wallet(models.Model):
-    name = models.Charfield(max_length=100, help_text='Name of wallet for the coin')
+    name = models.CharField(max_length=100, help_text='Wallet')
 
     def __str__(self):
         return self.name

@@ -30,5 +30,5 @@ class AlertAdmin(admin.ModelAdmin):
 
 @admin.register(Wallet)
 class WalletAdmin(admin.ModelAdmin):
-    list_display = ('name')
+    list_display = ('name',)
     ordering = ('name',)

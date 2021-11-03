@@ -2,7 +2,6 @@
 !/docker/docker-entrypoint.sh
 !/docker/start.sh
 /docs/
-.env
 /config/settings/dev.py
 /config/settings/test.py
 
