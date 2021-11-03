@@ -116,3 +116,6 @@ venv.bak/
 
 # macOS Zeug
 .DS_Store
+
+Dockerfile
+docker-compose.yml

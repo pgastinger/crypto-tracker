@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from crypto.models import Crypto, CryptoData, CryptoPurchases, Alert
+from crypto.models import Crypto, CryptoData, CryptoPurchases, Alert, Wallet
 
 
 @admin.register(Crypto)
@@ -26,3 +26,9 @@ class CryptoPurchasesAdmin(admin.ModelAdmin):
 class AlertAdmin(admin.ModelAdmin):
     list_display = ('crypto', 'price')
     ordering = ('timestamp',)
+
+
+@admin.register(Wallet)
+class WalletAdmin(admin.ModelAdmin):
+    list_display = ('name')
+    ordering = ('name',)

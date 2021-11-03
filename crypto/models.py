@@ -25,6 +25,13 @@ from crypto.utils import crypto_image_path
 # img.save(self.image.path)
 
 
+class Wallet(models.Model):
+    name = models.Charfield(max_length=100, help_text='Name of wallet for the coin')
+
+    def __str__(self):
+        return self.name
+
+
 class Crypto(models.Model):
     symbol = models.CharField(max_length=10, help_text='Crypto Ticker used for querying from CoinMarketCap')
     display_name = models.CharField(max_length=64, help_text='Used as the header when charting')
@@ -35,6 +42,8 @@ class Crypto(models.Model):
     order = models.PositiveSmallIntegerField(default=999)
     updated = models.DateTimeField(auto_now=True)
     added = models.DateTimeField(auto_now_add=True)
+
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)     
 
     class Meta:
         ordering = ('order', 'symbol')
