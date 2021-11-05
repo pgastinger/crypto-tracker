@@ -80,7 +80,13 @@ small {
   font-weight: 600;
   margin-bottom: -5px;
 }
-
+.crypto .name_and_wallet {
+   color: black;
+   font-weight: 200;
+   margin-bottom: -5px;
+   font-size:  10px;
+}  
+  
 .crypto .subinfo {
   font-size:  13px;
 }
