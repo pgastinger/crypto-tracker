@@ -6,24 +6,47 @@ from crypto.selectors import crypto_invest, crypto_ohlc
 
 
 def landing(request):
-    crypto_queryset = Crypto.objects\
-        .order_by('order', 'symbol')\
-        .prefetch_related('data', 'purchases')\
+    crypto_queryset = (
+        Crypto.objects.order_by("order", "symbol")
+        .prefetch_related("data", "purchases")
         .filter(enabled=True)
-    cryptos = crypto_invest(
-        crypto_queryset=crypto_queryset
     )
+    cryptos = crypto_invest(crypto_queryset=crypto_queryset)
 
     crypto_charts = []
-    if not request.GET.get('charts'):
-        # ?charts param to disable chart rendering
+    invested = round(
+        sum(
+            [
+                crypto.market_valuex
+                for crypto in cryptos
+                if crypto and crypto.market_valuex
+            ]
+        )
+    )
+    worth = round(
+        sum(
+            [
+                crypto.market_value
+                for crypto in cryptos
+                if crypto and crypto.market_value
+            ]
+        )
+    )
+    crypto_stats = {
+        "invested": invested,
+        "worth": worth,
+        "interest": round(worth / invested, 2) * 100,
+    }
+
+    if not request.GET.get("charts"):
+        #        # ?charts param to disable chart rendering
         crypto_charts = [
-            crypto_ohlc(crypto=crypto) for crypto
-            in cryptos.filter(show_chart=True)
+            crypto_ohlc(crypto=crypto) for crypto in cryptos.filter(show_chart=True)
         ]
 
     context = {
-        'cryptos': cryptos,
-        'crypto_charts': crypto_charts
+        "cryptos": cryptos,
+        "crypto_charts": crypto_charts,
+        "crypto_stats": crypto_stats,
     }
-    return render(request, 'crypto/dashboard.html', context)
+    return render(request, "crypto/dashboard.html", context)
