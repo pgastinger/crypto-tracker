@@ -32,4 +32,4 @@ jobs:
         file: ./docker/Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
         push: true
-        tags: '${{ secrets.REGISTRY_URL }}/crypto-tracker:latest'      
+        tags: '${{ secrets.REGISTRY_URL }}/my-project/server:latest'      
