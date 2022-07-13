@@ -88,3 +88,4 @@ Once added, `Purchases` enable you to indicate your assets/amount for each crypt
 
 - Resize image  
 - Price Alerting
+
