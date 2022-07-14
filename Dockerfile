@@ -1,4 +1,5 @@
-FROM python:3.10-slim as base
+ARG ARCH=
+FROM ${ARCH}python:3.10-slim as base
 LABEL maintainer="alfonsrv <alfonsrv@protonmail.com>"
 
 ENV PYTHONDONTWRITEBYTECODE 1
