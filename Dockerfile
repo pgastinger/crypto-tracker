@@ -1,6 +1,6 @@
-ARG ARCH=
-FROM ${ARCH}python:3.10-slim as base
-LABEL maintainer="alfonsrv <alfonsrv@protonmail.com>"
+FROM --platform=$BUILDPLATFORM python:3.9-slim as base
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
