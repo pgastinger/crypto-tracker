@@ -36,4 +36,4 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: |
-          crypto-tracker-app-github:${{github.run_id}}
+          registry.secitec.net/crypto-tracker-app-github:${{github.run_id}}
