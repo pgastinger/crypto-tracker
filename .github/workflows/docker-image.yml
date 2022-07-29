@@ -19,6 +19,8 @@ jobs:
       uses: pguyot/arm-runner-action@v2.4.0     
       with:
         commands: |
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sh get-docker.sh
             docker build . -t registry.secitec.net/crypto-tracker-app-github:${{github.run_id}}
             docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} ${{ secrets.REGISTRY_URL }}
             docker push registry.secitec.net/crypto-tracker-app-github:${{github.run_id}}
