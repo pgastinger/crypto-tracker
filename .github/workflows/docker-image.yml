@@ -18,7 +18,7 @@ jobs:
     - name: ARM runner
       uses: pguyot/arm-runner-action@v2.4.0     
       with:
-        base_image: raspios_lite:2022-04-04
         commands: |
             docker build . -t registry.secitec.net/crypto-tracker-app-github:${{github.run_id}}
+            docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} ${{ secrets.REGISTRY_URL }}
             docker push registry.secitec.net/crypto-tracker-app-github:${{github.run_id}}
