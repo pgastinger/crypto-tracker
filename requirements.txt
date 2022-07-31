@@ -34,3 +34,4 @@ sqlparse
 urllib3
 vine
 wcwidth
+whitenoise
