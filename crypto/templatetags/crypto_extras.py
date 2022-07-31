@@ -32,9 +32,12 @@ def cryptoformat(value):
     """ Only gets the next 3 decimals after the first non-zero value
     after the decimal point while ensuring floats are returned with "." """
     float_format = 2
-    if value < 1:
-        # finds first number after zeroes
-        float_format = int(str(value).partition('.')[2]) + 100
+    try:
+        if value < 1:
+            # finds first number after zeroes
+            float_format = int(str(value).partition('.')[2]) + 100
+    except:
+        pass
 
     value = round(value, float_format)
     return f'{value:f}'
