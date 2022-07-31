@@ -32,6 +32,7 @@ def cryptoformat(value):
     """ Only gets the next 3 decimals after the first non-zero value
     after the decimal point while ensuring floats are returned with "." """
     float_format = 2
+    # catch exception
     try:
         if value < 1:
             # finds first number after zeroes
