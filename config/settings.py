@@ -42,7 +42,6 @@ PCLOUD_OAUTH2_TOKEN = os.environ.get('PCLOUD_OAUTH2_TOKEN')
 DEFAULT_FILE_STORAGE = 'mediaproxy.pcloud.PCloudStorage'
 
 
-
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
