@@ -1,0 +1,28 @@
+from django.shortcuts import render
+from .pcloud import PyCloud
+from django.http import HttpResponse
+
+def _get_file_metadata(pc,filename):
+    folder_details = pc.listfolder(folderid=0)
+    for file in folder_details["metadata"]["contents"]:
+        if "/" in file["path"]:
+            stripped_path = file["path"].split("/")
+            fname = stripped_path[-1]
+        else:
+            fname = file["path"]
+        if fname == filename:
+            return file
+    return {}
+
+
+def index(request, filename):
+    access_token = "Nng7ZWawSpKl9Y1kZ8U5Er7Z5wCiKODFn4LaMF5Rmp0qARnlUOK7"
+    pc = PyCloud("",access_token, endpoint="eapi", oauth2=True)
+    md = _get_file_metadata(pc,filename)
+    assert bool(md), "File not found"
+    fd = pc.file_open(flags="", fileid=md["fileid"])
+    fs = pc.file_size(fd=fd["fd"])
+    filecontent = pc.file_read(fd=fd["fd"], count=fs["size"])
+    response = HttpResponse(content_type=md["contenttype"])
+    response.write(filecontent)
+    return response

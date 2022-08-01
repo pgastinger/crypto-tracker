@@ -38,6 +38,11 @@ SERVER_EMAIL = os.environ.get('EMAIL_SENDER')
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_SENDER')
 EMAIL_TIMEOUT = 15
 
+PCLOUD_OAUTH2_TOKEN = os.environ.get('PCLOUD_OAUTH2_TOKEN')
+DEFAULT_FILE_STORAGE = 'mediaproxy.pcloud.PCloudStorage'
+
+
+
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,7 +59,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'crypto'
+    'crypto',
+    'mediaproxy'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -126,8 +132,8 @@ STATICFILES_DIRS = [
 ]
 
 # User defined media content (Profile pictures)
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_files')
-MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media_files')
+#MEDIA_URL = '/media/'
 
 # Login Settings
 LOGIN_URL = '/login/'

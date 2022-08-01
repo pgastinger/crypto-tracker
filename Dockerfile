@@ -35,7 +35,8 @@ RUN chmod +x /app/start.sh
 RUN adduser --uid 9000 --disabled-password --gecos "" rausys && \
     usermod -a -G rausys rausys
 
-VOLUME ["/app/static", "/app/media_files", "/app/ca_files"]
+#VOLUME ["/app/static", "/app/media_files", "/app/ca_files"]
+VOLUME ["/app/static"]
 
 #RUN chown -R rausys:rausys /app/media_files && chown -R rausys:rausys /app/static
 

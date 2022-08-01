@@ -1,0 +1,159 @@
+# PCloud storage class for Django pluggable storage system, based on Dropbox version
+# Author: Anthony Monthe <anthony.monthe@gmail.com>
+# License: BSD
+#
+# Usage:
+#
+# Add below to settings.py:
+#  PCLOUD_OAUTH2_TOKEN = 'token'
+#  DEFAULT_FILE_STORAGE = 'mediaproxy.pcloud.PCloudStorage'
+
+
+from io import BytesIO
+from shutil import copyfileobj
+from tempfile import SpooledTemporaryFile
+
+from django.core.exceptions import ImproperlyConfigured
+from django.core.files.base import File
+from django.core.files.storage import Storage
+from django.utils._os import safe_join
+from django.utils.deconstruct import deconstructible
+
+from pcloud import PyCloud
+from storages.utils import get_available_overwrite_name, setting
+
+
+
+class PCloudFile(File):
+    def __init__(self, name, storage):
+        self.name = name
+        self._storage = storage
+
+        self.file_metadata, self.file_content = \
+            self._storage._get_file_content_with_metadata(self.name)
+
+
+@deconstructible
+class PCloudStorage(Storage):
+    """DropBox Storage class for Django pluggable storage system."""
+    oauth2_access_token = setting('PCLOUD_OAUTH2_TOKEN')
+    endpoint = "eapi"
+    root_path= "/"
+    write_mode = "add"
+
+    CHUNK_SIZE = 4 * 1024 * 1024
+
+    def __init__(self, oauth2_access_token=oauth2_access_token):
+        if oauth2_access_token is None:
+            raise ImproperlyConfigured("You must configure an auth token at"
+                                       "'settings.PCLOUD_OAUTH2_TOKEN'.")
+        self.client = PyCloud(username="",password=self.oauth2_access_token,endpoint=self.endpoint, oauth2=True)
+
+    def _full_path(self, name):
+        if name == '/':
+            name = ''
+        return safe_join(self.root_path, name).replace('\\', '/')
+
+    def _get_file_metadata(self, filename):
+        folder_details = self.client.listfolder(folderid=0)
+        for file in folder_details["metadata"]["contents"]:
+            fname = file["path"]
+            if fname == filename:
+                return file
+        return {}
+
+    def _get_file_content_with_metadata(self,filename):
+        md = self._get_file_metadata(filename)
+        assert bool(md), "File not found"
+        fd = self.client.file_open(flags="", fileid=md["fileid"])
+        fs = self.client.file_size(fd=fd["fd"])
+        return md,self.client.file_read(fd=fd["fd"], count=fs["size"])
+
+    def delete(self, name):
+        md = self._get_file_metadata(name)
+        self.client.deletefile(self._full_path(name))
+
+    def exists(self, name):
+        try:
+            return bool(self._get_file_metadata(self._full_path(name)))
+        except Exception as e:
+            print(e)
+            return False
+
+    def listdir(self, path):
+        directories, files = [], []
+        full_path = self._full_path(path)
+
+        if full_path == '/':
+            full_path = ''
+
+        metadata = self.client.listfolder(full_path)
+        for entry in metadata.entries:
+            if isinstance(entry, FolderMetadata):
+                directories.append(entry.name)
+            else:
+                files.append(entry.name)
+        return directories, files
+
+    def size(self, name):
+        metadata = self._get_file_metadata(self._full_path(name))
+        return metadata["size"]
+
+    def modified_time(self, name):
+        metadata = self._get_file_metadata(self._full_path(name))
+        return metadata["modified"]
+
+    def created_time(self, name):
+        metadata = self._get_file_metadata(self._full_path(name))
+        return metadata["created"]
+
+    def _get_link_for_file(self, filename):
+        md = self._get_file_metadata(filename)
+        assert bool(md), "File not found"
+        download_link = self.client._do_request("getfilepublink", fileid=md["fileid"])
+        download_details = self.client._do_request("getpublinkdownload",code=download_link["code"])
+        return f'https://{download_details["hosts"][0]}{download_details["path"]}'
+
+    def url(self, name):
+        return f"/media/{name}"
+
+    def _open(self, name, mode='rb'):
+        remote_file = PCloudFile(self._full_path(name), self)
+        return remote_file
+
+    def _save(self, name, content):
+        content.open()
+        if content.size <= self.CHUNK_SIZE:
+            self.client.uploadfile(data=content.read(), filename=name,folderid="0")
+        else:
+            self._chunked_upload(data=content, filename=name)
+        content.close()
+        return name.replace("/","")
+
+    def _chunked_upload(self, content, dest_path):
+        upload_session = self.client.files_upload_session_start(
+            content.read(self.CHUNK_SIZE)
+        )
+        cursor = UploadSessionCursor(
+            session_id=upload_session.session_id,
+            offset=content.tell()
+        )
+        commit = CommitInfo(path=dest_path, mode=WriteMode(self.write_mode))
+
+        while content.tell() < content.size:
+            if (content.size - content.tell()) <= self.CHUNK_SIZE:
+                self.client.files_upload_session_finish(
+                    content.read(self.CHUNK_SIZE), cursor, commit
+                )
+            else:
+                self.client.files_upload_session_append_v2(
+                    content.read(self.CHUNK_SIZE), cursor
+                )
+                cursor.offset = content.tell()
+
+    def get_available_name(self, name, max_length=None):
+        """Overwrite existing file with the same name."""
+        name = self._full_path(name)
+        if self.write_mode == 'overwrite':
+            return get_available_overwrite_name(name, max_length)
+        return super().get_available_name(name, max_length)
