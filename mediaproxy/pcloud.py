@@ -16,7 +16,15 @@ from django.utils.deconstruct import deconstructible
 
 from pcloud import PyCloud
 from django.conf import settings
+from dataclasses import dataclass
 
+@dataclass
+class PCloudEntry:
+    name: str
+    id: int
+    parent_folder_id: int
+    raw: dict
+    
 
 class PCloudFile(File):
     def __init__(self, name, storage):
@@ -29,6 +37,9 @@ class PCloudFile(File):
         ) = self._storage._get_file_content_with_metadata(self.name)
 
 
+class FileNotFoundException(Exception):
+    pass
+
 @deconstructible
 class PCloudStorage(Storage):
     """DropBox Storage class for Django pluggable storage system."""
@@ -36,8 +47,6 @@ class PCloudStorage(Storage):
     oauth2_access_token = settings.PCLOUD_OAUTH2_TOKEN
     endpoint = "eapi"
     root_path = "/"
-
-    CHUNK_SIZE = 4 * 1024 * 1024
 
     def __init__(self, oauth2_access_token=oauth2_access_token):
         if oauth2_access_token is None:
@@ -56,16 +65,8 @@ class PCloudStorage(Storage):
             name = ""
         return safe_join(self.root_path, name).replace("\\", "/")
 
-    def _get_file_metadata(self, filename):
-        folder_details = self.client.listfolder(folderid=0)
-        for file in folder_details["metadata"]["contents"]:
-            fname = file["path"]
-            if fname == filename:
-                return file
-        return {}
 
     def _get_file_content_with_metadata(self, filename):
-        print(filename)
         md = self._get_file_metadata(self._full_path(filename))
         assert bool(md), f"File {filename} not found"
         fd = self.client.file_open(flags="", fileid=md["fileid"])
@@ -83,15 +84,81 @@ class PCloudStorage(Storage):
         except Exception as e:
             return False
 
+    # recursive variant manually
     def listdir(self):
         directories, files = [], []
-        metadata = self.client.listfolder(folderid=0)
-        for entry in metadata["metadata"]["contents"]:
-            if entry["isfolder"]:
-                directories.append(entry["name"])
-            else:
-                files.append(entry["name"])
-        return directories, files
+        def _listdir(folderid):
+            folder_details = self.client.listfolder(folderid=folderid)
+            for entry in folder_details["metadata"]["contents"]:
+                if entry["isfolder"]:
+                    directories.append(PCloudEntry(name=entry["name"], id=entry["folderid"], parent_folder_id=entry["parentfolderid"], raw=entry))
+                    _listdir(folderid=entry["folderid"])
+                else:
+                    files.append(PCloudEntry(name=entry["name"], id=entry["fileid"], parent_folder_id=entry["parentfolderid"], raw=entry))
+            return directories,files
+
+        return _listdir(folderid=0)
+
+
+    # TODO
+    # currently ignores directories and duplicate files
+    def _get_file_metadata(self, filename):
+        splitted_filename = self._full_path(filename).split("/")
+        directories,files = self.listdir()
+#        found_entries = []
+        for f in files:
+            if splitted_filename[-1]== f.name:
+#                found_entries.append(f)
+                return f.raw
+#        if len(splitted_filename) == 2 and len(found_entries) == 1:
+#            return found_entries[0].raw
+#        for entry in found_entries:
+#            print(entry)
+#            parent = entry.parentfolderid
+#            for d in directories:
+#                if d.id == parentfolderid and d.name == splitted_filename[-2]:
+#                    print("ok")
+
+        raise FileNotFoundException(f"File {filename} not found")
+
+
+
+    """
+    def get_ids(self, data, key):
+        stack = [data]
+        result = []
+        while stack:
+            elem = stack.pop()
+            if isinstance(elem, dict):
+                for k, v in elem.items():
+                    if k == key:
+                        result.append(v)
+                    if isinstance(elem, (list, dict)):
+                        stack.append(v)
+            elif isinstance(elem, list):
+                for obj in elem:
+                    stack.append(obj)
+        return result
+
+    def get_file_id_by_filename(self, filename):
+        splitted_filename = self._full_path(filename).split("/")
+        result = self.client.listfolder(folderid=0, recursive=True)
+        print(result)
+        values = self.get_ids(result["metadata"], "name")
+        if splitted_filename[-1] in values:
+            print(filename)
+#        import jmespath
+#        print(jmespath.search(f'{"name": "{filename}"}'))
+#        from nested_lookup import nested_lookup
+#        print(nested_lookup('name', result))
+#        print(result)
+#        for f in files:
+#            if f.name == splitted_filename[-1]:
+#                if len(splitted_filename) == 1:
+#                    return f.id
+#        raise FileNotFoundException(f"File {filename} not found")
+    """
+
 
     def size(self, filename):
         metadata = self._get_file_metadata(self._full_path(filename))
@@ -126,4 +193,5 @@ class PCloudStorage(Storage):
         self.client.uploadfile(data=content.read(), filename=name, folderid="0")
         content.close()
         return name.replace("/", "")
+
 
