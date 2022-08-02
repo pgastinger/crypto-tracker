@@ -7,6 +7,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('crypto.urls', namespace='crypto')),
+    path('media/', include('mediaproxy.urls')),
 ]
 
 if settings.DEBUG:
