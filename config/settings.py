@@ -113,9 +113,9 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'cryptotrackerdb_high',
-        'USER': 'admin',
-        'PASSWORD': 'fAjkRnNhPE84oDG7EZLX',
+        'NAME': get_env_value('ORACLE_ADB_NAME'),
+        'USER': get_env_value('ORACLE_ADB_USER'),
+        'PASSWORD': get_env_value('ORACLE_ADB_PASSWORD'),
     }
 }
 
