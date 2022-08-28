@@ -42,5 +42,9 @@ RUN update-ca-certificates --fresh
 USER rausys:rausys
 WORKDIR /app
 
+# oracle instant client
+RUN curl https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basiclite-linux.arm64-19.10.0.0.0dbru.zip -o /tmp/instantclient.zip && unzip /tmp/instantclient.zip && rm /tmp/instantclient.zip
+COPY ./oci-db-wallet/ instantclient_19_10/network/admin/
+
 ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
 CMD ["sh", "/app/start.sh"]

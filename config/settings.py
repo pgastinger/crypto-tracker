@@ -98,6 +98,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -108,6 +109,16 @@ DATABASES = {
         'PORT': get_env_value('POSTGRES_PORT'),
     }
 }
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'cryptotrackerdb_high',
+        'USER': 'admin',
+        'PASSWORD': 'fAjkRnNhPE84oDG7EZLX',
+    }
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
