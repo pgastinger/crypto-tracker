@@ -9,7 +9,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc python3-dev libsasl2-dev libssl-dev \
     && apt-get install -y --no-install-recommends netcat libpq-dev postgresql-client tzdata \
-    && apt-get install -y --no-install-recommends git libjpeg-dev zlib1g-dev \
+    && apt-get install -y --no-install-recommends git libjpeg-dev zlib1g-dev wget unzip\
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /app
@@ -43,7 +43,7 @@ USER rausys:rausys
 WORKDIR /app
 
 # oracle instant client
-RUN curl https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basiclite-linux.arm64-19.10.0.0.0dbru.zip -o /tmp/instantclient.zip && unzip /tmp/instantclient.zip && rm /tmp/instantclient.zip
+RUN wget -q https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basiclite-linux.arm64-19.10.0.0.0dbru.zip -O /tmp/instantclient.zip && unzip /tmp/instantclient.zip && rm /tmp/instantclient.zip
 COPY ./oci-db-wallet/ instantclient_19_10/network/admin/
 
 ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
