@@ -38,13 +38,13 @@ VOLUME ["/app/static"]
 
 #RUN chown -R rausys:rausys /app/media_files && chown -R rausys:rausys /app/static
 
-RUN update-ca-certificates --fresh
-USER rausys:rausys
-WORKDIR /app
-
 # oracle instant client
 RUN wget -q https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basiclite-linux.arm64-19.10.0.0.0dbru.zip -O /tmp/instantclient.zip && unzip /tmp/instantclient.zip && rm /tmp/instantclient.zip
 COPY ./oci-db-wallet/ instantclient_19_10/network/admin/
+
+RUN update-ca-certificates --fresh
+USER rausys:rausys
+WORKDIR /app
 
 ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
 CMD ["sh", "/app/start.sh"]
