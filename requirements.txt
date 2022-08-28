@@ -37,3 +37,4 @@ vine
 wcwidth
 whitenoise
 pcloud
+cx_Oracle
