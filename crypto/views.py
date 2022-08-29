@@ -32,10 +32,15 @@ def landing(request):
             ]
         )
     )
+
+    try:        
+        interest = round(worth / invested, 2) * 100
+    except:
+        interest = 0
     crypto_stats = {
         "invested": invested,
         "worth": worth,
-        "interest": round(worth / invested, 2) * 100,
+        "interest": interest
     }
 
     if not request.GET.get("charts"):

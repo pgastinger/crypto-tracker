@@ -21,7 +21,7 @@ idna
 kombu
 Pillow
 prompt-toolkit
-#psycopg2-binary==2.8.5
+psycopg2-binary==2.8.5
 #psycopg2-binary
 python-crontab
 python-dateutil

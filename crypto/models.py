@@ -54,7 +54,10 @@ class Crypto(models.Model):
     @property
     def market_valuex(self):
         purchase_amount = sum([p.amount * p.target_price for p in self.purchases.all()])
-        market_value = purchase_amount * self.data.all()[:1][0].target_price
+        try:
+            market_value = purchase_amount * self.data.all()[:1][0].target_price
+        except:
+            market_value = 0
         return purchase_amount
 
 
