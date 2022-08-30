@@ -44,9 +44,6 @@
             <span class="name_and_wallet ml-1">
 		    {{ crypto.display_name }}
             </span>
-            <span class="name_and_wallet ml-1">
-		    {{crypto.wallet}}
-            </span>
             <div class="subinfo d-flex">
               <span class="earns {% if crypto.percent_change < 0 %}text-danger{% else %}text-success{% endif %} ml-2">
                 {% if crypto.show_overall %}{{ crypto.percent_change|percent }}{% endif %}

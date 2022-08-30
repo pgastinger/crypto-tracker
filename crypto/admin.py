@@ -5,7 +5,7 @@ from crypto.models import Crypto, CryptoData, CryptoPurchases, Alert, Wallet
 
 @admin.register(Crypto)
 class CryptoAdmin(admin.ModelAdmin):
-    list_display = ('symbol', 'display_name', 'updated', 'enabled', 'wallet')
+    list_display = ('symbol', 'display_name', 'updated', 'enabled')
     ordering = ('symbol',)
 
 
@@ -18,7 +18,7 @@ class CryptoDataAdmin(admin.ModelAdmin):
 
 @admin.register(CryptoPurchases)
 class CryptoPurchasesAdmin(admin.ModelAdmin):
-    list_display = ('crypto', 'amount', 'buy_price', 'total_price', 'bought_at')
+    list_display = ('crypto', 'amount', 'buy_price', 'total_price', 'bought_at', 'wallet')
     ordering = ('-bought_at',)
 
 

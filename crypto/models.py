@@ -43,7 +43,6 @@ class Crypto(models.Model):
     updated = models.DateTimeField(auto_now=True)
     added = models.DateTimeField(auto_now_add=True)
 
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)     
 
     class Meta:
         ordering = ('order', 'symbol')
@@ -127,6 +126,7 @@ class CryptoPurchases(models.Model):
         help_text='Automatically converty buying price into localized-target price if left empty'
     )
     bought_at = models.DateTimeField(default=timezone.now, blank=True)
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)     
 
     class Meta:
         verbose_name = 'Purchase'
