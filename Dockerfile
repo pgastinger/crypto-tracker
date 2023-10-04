@@ -49,3 +49,5 @@ WORKDIR /app
 
 ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
 CMD ["sh", "/app/start.sh"]
+
+
