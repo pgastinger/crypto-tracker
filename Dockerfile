@@ -39,9 +39,9 @@ VOLUME ["/app/static"]
 #RUN chown -R rausys:rausys /app/media_files && chown -R rausys:rausys /app/static
 
 # oracle instant client
-RUN wget -q  https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basic-linux.arm64-19.10.0.0.0dbru-2.zip -O /tmp/instantclient.zip && unzip /tmp/instantclient.zip && rm /tmp/instantclient.zip
-COPY ./oci-db-wallet/ instantclient_19_10/network/admin/
-ENV LD_LIBRARY_PATH=/app/instantclient_19_10/
+#RUN wget -q  https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basic-linux.arm64-19.10.0.0.0dbru-2.zip -O /tmp/instantclient.zip && unzip /tmp/instantclient.zip && rm /tmp/instantclient.zip
+#COPY ./oci-db-wallet/ instantclient_19_10/network/admin/
+#ENV LD_LIBRARY_PATH=/app/instantclient_19_10/
 
 RUN update-ca-certificates --fresh
 USER rausys:rausys
