@@ -120,7 +120,7 @@ DATABASES = {
         'PORT': 5432
     }
 }
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
@@ -129,6 +129,36 @@ DATABASES = {
         'PASSWORD': get_env_value('ORACLE_ADB_PASSWORD'),
     }
 }
+"""
+
+# at the moment, Django 4.1 doesn't support the new python-oracledb (successor of cx_Oracle) and finally
+# oracle doesn't need an additional library anymore for most of the things.
+import sys
+import oracledb
+
+oracledb.version = "8.3.0"
+sys.modules["cx_Oracle"] = oracledb
+import cx_Oracle
+
+
+oracle_config_dir = get_env_value("ORACLE_CONFIG_DIR")
+oracle_wallet_password = get_env_value("ORACLE_WALLET_PASSWORD")
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.oracle",
+        "NAME": get_env_value("DB_DSN"),
+        "USER": get_env_value("DB_USER"),
+        "PASSWORD": get_env_value("DB_PASSWORD"),
+        "CONN_HEALTH_CHECKS": True,
+        "OPTIONS": {
+            "config_dir": oracle_config_dir,
+            "wallet_location": oracle_config_dir,
+            "wallet_password": oracle_wallet_password,
+        },
+    }
+}
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
