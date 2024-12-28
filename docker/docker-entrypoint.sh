@@ -11,13 +11,13 @@ set -ex
 #sleep 2
 #>&2 echo "Postgres is up - executing command"
 
-until nc -w 1 -z redis 6379; do
+until nc -w 1 -z redis-svc 6379; do
   >&2 echo "REDIS is unavailable - sleeping"
   sleep 1
 done
 sleep 2
 >&2 echo "REDIS is up - executing command"
 
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput
+python app/manage.py migrate --noinput
+python app/manage.py collectstatic --noinput
 exec "$@"
