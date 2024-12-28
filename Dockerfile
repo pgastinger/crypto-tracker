@@ -1,7 +1,7 @@
 FROM python:3.12-slim as base
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -13,8 +13,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends netcat tzdata \
-#    && apt-get install -y --no-install-recommends git libjpeg-dev zlib1g-dev wget unzip libaio1\
+    && apt-get install -y --no-install-recommends netcat-openbsd tzdata \
+    && apt-get install -y --no-install-recommends git libjpeg-dev zlib1g-dev wget unzip libaio1\
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /app
@@ -25,8 +25,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM base
 LABEL maintainer="alfonsrv <alfonsrv@protonmail.com>"
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 COPY app .
 #COPY --from=base /venv /venv
@@ -54,5 +54,3 @@ WORKDIR /app
 
 ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
 CMD ["sh", "/app/start.sh"]
-
-
