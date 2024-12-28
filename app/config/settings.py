@@ -41,7 +41,16 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_SENDER')
 EMAIL_TIMEOUT = 15
 
 PCLOUD_OAUTH2_TOKEN = os.environ.get('PCLOUD_OAUTH2_TOKEN')
-DEFAULT_FILE_STORAGE = 'mediaproxy.pcloud.PCloudStorage'
+
+#STORAGES["default"] = 'mediaproxy.pcloud.PCloudStorage' # deprecated
+STORAGES = {
+    "default": {
+        "BACKEND": "mediaproxy.pcloud.PCloudStorage"
+        },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },        
+}
 
 
 DJANGO_APPS = [
