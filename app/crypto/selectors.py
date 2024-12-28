@@ -1,4 +1,4 @@
-from django.contrib.postgres.aggregates import ArrayAgg
+#from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import QuerySet, Sum, F, OuterRef, Subquery, Func, Max, Min
 
 from crypto.models import CryptoData, Crypto
@@ -28,11 +28,6 @@ def crypto_ohlc(*, crypto: Crypto) -> QuerySet:
 
     crypto.chart = CryptoData.objects.filter(crypto=crypto).values(
         timestampg=DateFloor('timestamp'),
-    ).annotate(
-        open=ArrayHead(ArrayAgg('target_price')),
-        high=Max('target_price'),
-        low=Min('target_price'),
-        close=ArrayTail(ArrayAgg('target_price')),
-    ).order_by('timestampg')
+    )
 
     return crypto
