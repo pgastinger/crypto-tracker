@@ -39,3 +39,4 @@ whitenoise
 pcloud
 #cx_Oracle
 oracledb
+django_database_prefix

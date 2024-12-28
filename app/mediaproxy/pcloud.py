@@ -69,7 +69,7 @@ class PCloudStorage(Storage):
     def _get_file_content_with_metadata(self, filename):
         md = self._get_file_metadata(self._full_path(filename))
         assert bool(md), f"File {filename} not found"
-        fd = self.client.file_open(flags="", fileid=md["fileid"])
+        fd = self.client.file_open(flags="0x0002", fileid=md["fileid"])
         fs = self.client.file_size(fd=fd["fd"])
         return md, self.client.file_read(fd=fd["fd"], count=fs["size"])
 
