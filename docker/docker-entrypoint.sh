@@ -18,6 +18,6 @@ done
 sleep 2
 >&2 echo "REDIS is up - executing command"
 
-python app/manage.py migrate --noinput
-python app/manage.py collectstatic --noinput
+python /app/manage.py migrate --noinput
+python /app/manage.py collectstatic --noinput
 exec "$@"
