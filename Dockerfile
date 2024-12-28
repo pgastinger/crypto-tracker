@@ -14,7 +14,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends netcat tzdata \
-    && apt-get install -y --no-install-recommends git libjpeg-dev zlib1g-dev wget unzip libaio1\
+#    && apt-get install -y --no-install-recommends git libjpeg-dev zlib1g-dev wget unzip libaio1\
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /app
