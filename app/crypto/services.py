@@ -72,20 +72,24 @@ def currency_convert(*, source_currency: str, target_currency: str, source_amoun
     """ Converts currencies using forex-python. An optional timestamp can be specified for
     historic exchange rates. If the historic exchange rate lookup fails, the current
     exchange rate is used instead """
-    c = CurrencyRates()
-    try:
-        return c.convert(
-            source_currency,
-            target_currency,
-            source_amount,
-            date_obj=timestamp
-        )
-    except RatesNotAvailableError:
-        return c.convert(
-            source_currency,
-            target_currency,
-            source_amount
-        )
+    # doesn't work anymore ... 
+    # https://theforexapi.com/api/latest doesn't exist anymore!
+    # 
+    # c = CurrencyRates()
+    # try:
+    #     return c.convert(
+    #         source_currency,
+    #         target_currency,
+    #         source_amount,
+    #         date_obj=timestamp
+    #     )
+    # except RatesNotAvailableError:
+    #     return c.convert(
+    #         source_currency,
+    #         target_currency,
+    #         source_amount
+    #     )
+    return source_amount
 
 
 def alert_price(*, alert: Alert) -> None:
