@@ -62,9 +62,9 @@ class Crypto(models.Model):
 
 class CryptoData(models.Model):
     crypto = models.ForeignKey(Crypto, on_delete=models.CASCADE, related_name='data')
-    source_price = models.FloatField()
+    source_price = models.FloatField(default=0.00)
     source_currency = models.CharField(max_length=4)
-    target_price = models.FloatField()
+    target_price = models.FloatField(default=0.00)
     target_currency = models.CharField(max_length=4)
     percent_day = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='24h Percentual Change')
     rank = models.PositiveIntegerField()

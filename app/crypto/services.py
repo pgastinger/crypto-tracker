@@ -22,13 +22,16 @@ def crypto_update():
         return
     crypto_quotes = crypto_get(crypto_symbols=cryptos)
     for symbol, quote in crypto_quotes.items():
-        CryptoData.objects.create(
-            crypto=Crypto.objects.get(symbol=symbol),
-            source_price=quote.get('price'),
-            source_currency=quote.get('currency'),
-            percent_day=quote.get('percent_day'),
-            rank=quote.get('rank'),
-        )
+        try:
+            CryptoData.objects.create(
+                crypto=Crypto.objects.get(symbol=symbol),
+                source_price=quote.get('price'),
+                source_currency=quote.get('currency'),
+                percent_day=quote.get('percent_day'),
+                rank=quote.get('rank'),
+            )
+        except:
+            logger.error(f'Error updating crypto {symbol}')
     logger.info('Updated all crypto price information')
 
 

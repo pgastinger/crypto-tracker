@@ -3,10 +3,10 @@ from distutils.util import strtobool
 from pathlib import Path
 
 from celery.schedules import crontab
+from dotenv import load_dotenv
 
 from config.utils import get_env_value
 
-from dotenv import load_dotenv
 
 load_dotenv()
 
